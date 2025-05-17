@@ -1,0 +1,26 @@
+import request from '@/utils/request'
+
+// 登录
+export const loginAPI = ({ account, password }) =>
+  request.post('/user/login', { account, password })
+
+// 注册
+export const registerAPI = ({ account, password, email }) =>
+  request.post('/user/login/register', { account, password, email })
+
+// 验证账号已存在
+export const isAccountExistAPI = (email) => request.get('/user/login/forget', { params: { email } })
+
+// 获取验证码
+export const getCodeAPI = (email) => request.get('/user/login/phrase', { params: { email } })
+
+// 验证码校验
+export const validateCodeAPI = ({ email, code }) =>
+  request.get('/user/login/verify', { params: { email, code } })
+
+// 修改密码
+export const modifyPasswordAPI = ({ email, password }) =>
+  request.put('/user/login/password', { email, password })
+
+// 获取用户信息
+export const getUserInfoAPI = (id) => request.get('/user/person', { params: { id } })

@@ -1,9 +1,54 @@
 <script setup>
-import { Search, BellFilled, UserFilled } from '@element-plus/icons-vue'
+import {
+  Search,
+  BellFilled,
+  UserFilled,
+  User,
+  Document,
+  Star,
+  SwitchButton
+} from '@element-plus/icons-vue'
+import LoginDialog from './components/LoginDialog.vue'
+import { useUserStore } from '@/stores'
 
+// 菜单激活项
 const activeMenu = ref('/home')
 
+// 搜索关键字
 const searchKey = ref('')
+
+const userStore = useUserStore()
+onMounted(() => {
+  if (userStore.userId) userStore.getUserInfo()
+})
+
+// 下拉菜单处理
+const loginDialog = ref()
+const router = useRouter()
+const handleCommand = async (key) => {
+  switch (key) {
+    // 登录
+    case 'login': {
+      loginDialog.value.open()
+      break
+    }
+    // 退出
+    case 'logout': {
+      // 询问退出
+      await ElMessageBox.confirm('确认退出账号吗？', '温馨提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        center: true
+      })
+      // 退出
+      userStore.onLogout()
+      ElMessage.success('退出成功')
+      router.replace('/home')
+      break
+    }
+  }
+}
 </script>
 
 <template>
@@ -34,14 +79,31 @@ const searchKey = ref('')
           <el-badge :value="3" class="message" :offset="[-10, 5]">
             <el-button :icon="BellFilled" class="bell" />
           </el-badge>
-          <el-avatar class="avatar" fit="fill">
-            <img v-if="false" src="" alt="" />
-            <el-icon v-else><UserFilled /></el-icon>
-          </el-avatar>
+          <!-- 头像&下拉菜单 -->
+          <el-dropdown @command="handleCommand" placement="bottom-end">
+            <template #default>
+              <el-avatar class="avatar" fit="fill">
+                <img v-if="userStore.userInfo?.image" :src="userStore.userInfo.image" alt="" />
+                <el-icon v-else><UserFilled /></el-icon>
+              </el-avatar>
+            </template>
+            <template #dropdown>
+              <el-dropdown-menu v-if="userStore.userId">
+                <el-dropdown-item command="profile" :icon="User">基本信息</el-dropdown-item>
+                <el-dropdown-item command="article" :icon="Document">我的文章</el-dropdown-item>
+                <el-dropdown-item command="star" :icon="Star">我的收藏</el-dropdown-item>
+                <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+              <el-dropdown-menu v-else>
+                <el-dropdown-item command="login" :icon="User">登录账号</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </el-header>
       <el-main><router-view /></el-main>
     </el-container>
+    <LoginDialog ref="loginDialog" @success="$router.replace('/home')" />
   </div>
 </template>
 
@@ -86,6 +148,7 @@ const searchKey = ref('')
       width: 35px;
       height: 35px;
       font-size: 18px;
+      cursor: pointer;
     }
   }
 }
