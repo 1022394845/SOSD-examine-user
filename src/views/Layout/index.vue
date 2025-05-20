@@ -112,6 +112,7 @@ const handleCommand = async (key) => {
   position: sticky;
   top: 0;
   background-color: #ffffff;
+  z-index: 99;
 
   .container {
     margin: 0 auto;
