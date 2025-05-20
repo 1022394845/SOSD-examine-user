@@ -128,6 +128,7 @@ const handleCommand = async (key) => {
     .menu {
       flex: 1;
       margin: 0 20px;
+      border-bottom: none;
     }
 
     .author-center {
@@ -157,6 +158,7 @@ const handleCommand = async (key) => {
 
 .el-main {
   margin: 0 auto;
+  padding: 20px 0;
   width: 1200px;
   overflow: visible;
 }
