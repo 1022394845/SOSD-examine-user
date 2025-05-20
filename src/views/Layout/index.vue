@@ -109,6 +109,8 @@ const handleCommand = async (key) => {
 
 <style scoped lang="scss">
 .el-header {
+  position: sticky;
+  top: 0;
   background-color: #ffffff;
 
   .container {
@@ -154,7 +156,8 @@ const handleCommand = async (key) => {
 }
 
 .el-main {
-  margin: 20px auto;
+  margin: 0 auto;
   width: 1200px;
+  overflow: visible;
 }
 </style>
