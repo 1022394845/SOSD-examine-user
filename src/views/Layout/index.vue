@@ -152,4 +152,9 @@ const handleCommand = async (key) => {
     }
   }
 }
+
+.el-main {
+  margin: 20px auto;
+  width: 1200px;
+}
 </style>
