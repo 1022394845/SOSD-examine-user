@@ -10,6 +10,9 @@ import '@/styles/common.scss'
 // iconfont字体图标
 import VIcon from '@/components/v-icon/index.vue'
 
+// 自定义字体
+import '@/fonts/font.css'
+
 const app = createApp(App)
 
 app.use(pinia)
