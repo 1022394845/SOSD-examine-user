@@ -6,3 +6,7 @@ export const getArticleListAPI = (pageInfo, config) =>
 
 // 获取热点文章列表
 export const getHotListAPI = () => request.get('/user/homepage/hot')
+
+// 分页获取搜索列表
+export const getSearchListAPI = (pageInfo, title) =>
+  request.get('/user/homepage/search', { params: { ...pageInfo, title } })
