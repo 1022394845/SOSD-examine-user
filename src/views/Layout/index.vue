@@ -17,6 +17,17 @@ const activeMenu = ref('/home')
 
 // 搜索关键字
 const searchKey = ref('')
+const router = useRouter()
+const route = useRoute()
+const onSearch = () => {
+  if (!searchKey.value || route.query.title === searchKey.value) return
+  router.push({
+    path: '/search',
+    query: {
+      title: searchKey.value
+    }
+  })
+}
 
 const userStore = useUserStore()
 onMounted(() => {
@@ -25,7 +36,6 @@ onMounted(() => {
 
 // 下拉菜单处理
 const loginDialog = ref()
-const router = useRouter()
 const handleCommand = async (key) => {
   switch (key) {
     // 登录
@@ -71,9 +81,14 @@ const handleCommand = async (key) => {
             <el-menu-item index="" disabled>课程</el-menu-item>
             <el-menu-item index="" disabled>活动</el-menu-item>
           </el-menu>
-          <el-input v-model="searchKey" placeholder="输入搜索内容" style="width: 300px">
+          <el-input
+            v-model="searchKey"
+            placeholder="输入搜索内容"
+            style="width: 300px"
+            @keyup.enter="onSearch"
+          >
             <template #append>
-              <el-button :icon="Search" />
+              <el-button :icon="Search" @click="onSearch" />
             </template>
           </el-input>
           <el-button type="primary" class="author-center">创作者中心</el-button>
