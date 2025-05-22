@@ -22,9 +22,11 @@ onMounted(() => {
 })
 
 // 监听keyword变化
+const keyword = ref(route.query.title)
 watch(
   () => route.query.title,
   () => {
+    keyword.value = route.query.title
     window.scrollTo(0, 0)
     searchPage.resetPage()
     searchList.value = []
@@ -44,7 +46,7 @@ watch(
       :infinite-scroll-distance="5"
     >
       <li v-for="(item, index) in searchList" :key="index">
-        <ArticleCard :detail="item" />
+        <ArticleCard :detail="item" :keyword="keyword" />
       </li>
     </ul>
   </div>
