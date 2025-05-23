@@ -37,18 +37,20 @@ watch(
 
 <template>
   <div class="search-page">
-    <el-skeleton v-if="!searchList.length && searchPage.loading.value" :rows="4" animated />
-    <ul
-      v-else
-      v-infinite-scroll="() => searchPage.nextPage()"
-      :infinite-scroll-disabled="searchPage.disableLoad.value"
-      :infinite-scroll-delay="1000"
-      :infinite-scroll-distance="5"
-    >
-      <li v-for="(item, index) in searchList" :key="index">
-        <ArticleCard :detail="item" :keyword="keyword" />
-      </li>
-    </ul>
+    <div class="article-list">
+      <el-skeleton v-if="!searchList.length && searchPage.loading.value" :rows="4" animated />
+      <ul
+        v-else
+        v-infinite-scroll="() => searchPage.nextPage()"
+        :infinite-scroll-disabled="searchPage.disableLoad.value"
+        :infinite-scroll-delay="1000"
+        :infinite-scroll-distance="5"
+      >
+        <li v-for="(item, index) in searchList" :key="index">
+          <ArticleCard :detail="item" :keyword="keyword" />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -57,7 +59,10 @@ watch(
   margin: 0 auto;
   width: 700px;
   min-height: 100vh;
-  background-color: #ffffff;
+
+  .article-list {
+    background-color: #ffffff;
+  }
 
   .el-skeleton {
     padding: 10px 20px;
