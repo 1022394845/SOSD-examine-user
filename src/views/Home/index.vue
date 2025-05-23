@@ -2,15 +2,9 @@
 import { getArticleListAPI, getHotListAPI } from '@/api/article'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { usePagination } from '@/composables/PageInfo'
+import { useArticleStore } from '@/stores'
 
-const categoryList = ref([
-  { name: 'recommended', label: '综合' },
-  { name: 'frontend', label: '前端' },
-  { name: 'backend', label: '后端' },
-  { name: 'android', label: '安卓' },
-  { name: 'ios', label: 'iOS' },
-  { name: 'ai', label: '人工智能' }
-])
+const { categoryList } = useArticleStore()
 
 // 文章列表
 const sort = ref('recommend')
