@@ -24,3 +24,14 @@ export const modifyPasswordAPI = ({ email, password }) =>
 
 // 获取用户信息
 export const getUserInfoAPI = (id) => request.get('/user/person', { params: { id } })
+
+// 上传头像
+export const uploadAvatarAPI = (file) =>
+  request.post('/user/common/upload', file, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+
+// 修改个人信息
+export const modifyUserInfoAPI = (data) => request.put('/user/person', data)
