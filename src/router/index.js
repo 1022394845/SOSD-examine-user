@@ -19,7 +19,30 @@ const router = createRouter({
         },
         {
           path: '/user',
-          component: User
+          component: User,
+          redirect: '/user/profile',
+          children: [
+            {
+              path: 'profile',
+              component: () => import('@/views/User/Pages/ProfilePage.vue')
+            },
+            {
+              path: 'article',
+              component: () => import('@/views/User/Pages/ArticlePage.vue')
+            },
+            {
+              path: 'star',
+              component: () => import('@/views/User/Pages/StarPgae.vue')
+            },
+            {
+              path: 'history',
+              component: () => import('@/views/User/Pages/HistoryPage.vue')
+            },
+            {
+              path: 'publish',
+              component: () => import('@/views/User/Pages/PublishPage.vue')
+            }
+          ]
         },
         {
           path: '/article',

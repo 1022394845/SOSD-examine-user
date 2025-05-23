@@ -37,28 +37,21 @@ onMounted(() => {
 // 下拉菜单处理
 const loginDialog = ref()
 const handleCommand = async (key) => {
-  switch (key) {
-    // 登录
-    case 'login': {
-      loginDialog.value.open()
-      break
-    }
+  if (key === 'login')
+    loginDialog.value.open() // 登录
+  else if (key === 'logout') {
+    // 询问退出
+    await ElMessageBox.confirm('确认退出账号吗？', '温馨提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+      center: true
+    })
     // 退出
-    case 'logout': {
-      // 询问退出
-      await ElMessageBox.confirm('确认退出账号吗？', '温馨提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        type: 'warning',
-        center: true
-      })
-      // 退出
-      userStore.onLogout()
-      ElMessage.success('退出成功')
-      router.replace('/home')
-      break
-    }
-  }
+    userStore.onLogout()
+    ElMessage.success('退出成功')
+    router.replace('/home')
+  } else router.push('/user/' + key)
 }
 </script>
 
@@ -91,7 +84,9 @@ const handleCommand = async (key) => {
               <el-button :icon="Search" @click="onSearch" />
             </template>
           </el-input>
-          <el-button type="primary" class="author-center">创作者中心</el-button>
+          <el-button type="primary" class="author-center" @click="$router.push('/user')">
+            创作者中心
+          </el-button>
           <el-badge :value="3" class="message" :offset="[-10, 5]">
             <el-button :icon="BellFilled" class="bell" />
           </el-badge>
@@ -108,7 +103,7 @@ const handleCommand = async (key) => {
                 <el-dropdown-item command="profile" :icon="User">基本信息</el-dropdown-item>
                 <el-dropdown-item command="article" :icon="Document">我的文章</el-dropdown-item>
                 <el-dropdown-item command="star" :icon="Star">我的收藏</el-dropdown-item>
-                <el-dropdown-item command="star" :icon="Clock">历史记录</el-dropdown-item>
+                <el-dropdown-item command="history" :icon="Clock">历史记录</el-dropdown-item>
                 <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
               </el-dropdown-menu>
               <el-dropdown-menu v-else>
