@@ -35,3 +35,6 @@ export const uploadAvatarAPI = (file) =>
 
 // 修改个人信息
 export const modifyUserInfoAPI = (data) => request.put('/user/person', data)
+
+// 获取历史记录
+export const getHistoryAPI = (id) => request.get('/user/person/history', { params: { id } })
