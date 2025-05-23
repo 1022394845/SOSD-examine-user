@@ -38,3 +38,9 @@ export const modifyUserInfoAPI = (data) => request.put('/user/person', data)
 
 // 获取历史记录
 export const getHistoryAPI = (id) => request.get('/user/person/history', { params: { id } })
+
+// 获取用户发表的文章
+export const getUserArticleAPI = (id) => request.get('/user/person/articles', { params: { id } })
+
+// 删除文章
+export const deleteArticleAPI = (id) => request.delete('/user/article', { id })
