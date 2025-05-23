@@ -6,6 +6,7 @@ import {
   User,
   Document,
   Star,
+  Clock,
   SwitchButton
 } from '@element-plus/icons-vue'
 import LoginDialog from './components/LoginDialog.vue'
@@ -92,6 +93,7 @@ const handleCommand = async (key) => {
                 <el-dropdown-item command="profile" :icon="User">基本信息</el-dropdown-item>
                 <el-dropdown-item command="article" :icon="Document">我的文章</el-dropdown-item>
                 <el-dropdown-item command="star" :icon="Star">我的收藏</el-dropdown-item>
+                <el-dropdown-item command="star" :icon="Clock">历史记录</el-dropdown-item>
                 <el-dropdown-item command="logout" :icon="SwitchButton">退出登录</el-dropdown-item>
               </el-dropdown-menu>
               <el-dropdown-menu v-else>
