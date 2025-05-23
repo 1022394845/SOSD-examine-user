@@ -8,9 +8,12 @@ const searchPage = usePagination()
 const route = useRoute()
 const getSearchList = async () => {
   searchPage.loading.value = true
+  const config = {}
+  if (route.query.title) config.title = route.query.title
+  if (route.query.tag) config.tag = route.query.tag
   const {
     data: { total, records }
-  } = await getSearchListAPI(searchPage.pageInfo.value, route.query.title)
+  } = await getSearchListAPI(searchPage.pageInfo.value, config)
   searchPage.total.value = total
   searchList.value.push(...records)
   searchPage.loading.value = false
@@ -22,21 +25,25 @@ onMounted(() => {
 })
 
 // 监听keyword变化
-const keyword = ref(route.query.title)
+const keyword = ref(Object.values(route.query)[0])
 watch(
-  () => route.query.title,
+  () => route.query,
   () => {
-    keyword.value = route.query.title
+    keyword.value = Object.values(route.query)[0]
     window.scrollTo(0, 0)
     searchPage.resetPage()
     searchList.value = []
     searchPage.nextPage()
+  },
+  {
+    deep: true
   }
 )
 </script>
 
 <template>
   <div class="search-page">
+    <div class="title">{{ keyword }}</div>
     <div class="article-list">
       <el-skeleton v-if="!searchList.length && searchPage.loading.value" :rows="4" animated />
       <ul
@@ -59,6 +66,14 @@ watch(
   margin: 0 auto;
   width: 700px;
   min-height: 100vh;
+
+  .title {
+    margin-bottom: 10px;
+    font-size: 25px;
+    font-weight: 700;
+    color: #666666;
+    text-align: center;
+  }
 
   .article-list {
     background-color: #ffffff;

@@ -8,5 +8,5 @@ export const getArticleListAPI = (pageInfo, config) =>
 export const getHotListAPI = () => request.get('/user/homepage/hot')
 
 // 分页获取搜索列表
-export const getSearchListAPI = (pageInfo, title) =>
-  request.get('/user/homepage/search', { params: { ...pageInfo, title } })
+export const getSearchListAPI = (pageInfo, config) =>
+  request.get('/user/homepage/search', { params: { ...pageInfo, ...config } })
