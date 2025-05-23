@@ -1,24 +1,48 @@
 <script setup>
-const { detail } = defineProps({ detail: Object })
+const { detail, keyword } = defineProps({ detail: Object, keyword: String })
+
+// 高亮匹配内容
+const highlightMatch = (text) => {
+  if (!keyword) return text
+  const regex = new RegExp(`(${keyword})`, 'gi')
+  return text.replace(regex, '<em style="color: #e8001c; font-style: normal;">$1</em>')
+}
+
+// 标签搜索文章
+const router = useRouter()
+const onSearchTag = (tag) => {
+  router.push({
+    path: '/search',
+    query: { tag }
+  })
+}
 </script>
 
 <template>
   <div class="article-card">
-    <div class="title ellipsis">{{ detail.title }}</div>
-    <div class="content ellipsis">{{ detail.content }}</div>
-    <div class="footer">
-      <div class="info">
-        <div class="hover">{{ detail.author }}</div>
-        <el-divider direction="vertical" />
-        <div class="item"><v-icon name="view" />{{ detail.viewNumber }}</div>
-        <div class="item hover"><v-icon name="like" />{{ detail.likeNumber }}</div>
-      </div>
-      <div class="tag-list">
-        <div class="tag hover" v-for="(item, index) in detail.tags" :key="index">
-          {{ item.name }}
+    <div class="main-info">
+      <div class="title ellipsis" v-html="highlightMatch(detail.title)"></div>
+      <div class="content ellipsis" v-html="highlightMatch(detail.content)"></div>
+      <div class="footer">
+        <div class="info">
+          <div class="hover">{{ detail.author }}</div>
+          <el-divider direction="vertical" />
+          <div class="item"><v-icon name="view" />{{ detail.viewNumber }}</div>
+          <div class="item hover"><v-icon name="like" />{{ detail.likeNumber }}</div>
+        </div>
+        <div class="tag-list">
+          <div
+            class="tag hover"
+            v-for="(item, index) in detail.tags"
+            :key="index"
+            @click="onSearchTag(item.name)"
+          >
+            {{ item.name }}
+          </div>
         </div>
       </div>
     </div>
+    <el-image v-if="detail.image" :src="detail.img" lazy />
   </div>
 </template>
 
@@ -27,8 +51,7 @@ const { detail } = defineProps({ detail: Object })
   margin: 0 20px;
   padding: 10px 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
   height: 100px;
   color: #8a919f;
   border-bottom: 1px solid var(--el-border-color);
@@ -39,64 +62,80 @@ const { detail } = defineProps({ detail: Object })
     background-color: #f7f8fa;
   }
 
-  .title {
-    line-height: 24px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #252933;
-  }
-
-  .content {
-    margin-top: 4px;
-    line-height: 22px;
-    font-size: 13px;
-  }
-
-  .footer {
-    margin-top: 3px;
+  .main-info {
+    flex: 1;
     display: flex;
-    justify-content: space-between;
-    line-height: 20px;
-    font-size: 13px;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
 
-    .hover {
-      cursor: pointer;
-
-      &:hover {
-        color: var(--el-color-primary);
-      }
+    .title {
+      line-height: 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #252933;
     }
 
-    .info {
-      display: flex;
-      align-items: center;
+    .content {
+      margin-top: 4px;
+      line-height: 22px;
+      font-size: 13px;
+    }
 
-      .el-divider {
-        margin: 0 15px;
+    .footer {
+      margin-top: 3px;
+      display: flex;
+      justify-content: space-between;
+      line-height: 20px;
+      font-size: 13px;
+
+      .hover {
+        cursor: pointer;
+
+        &:hover {
+          color: var(--el-color-primary);
+        }
       }
 
-      .item {
-        margin-right: 20px;
+      .info {
         display: flex;
         align-items: center;
 
-        .v-icon {
-          margin-right: 5px;
+        .el-divider {
+          margin: 0 15px;
+        }
+
+        .item {
+          margin-right: 20px;
+          display: flex;
+          align-items: center;
+
+          .v-icon {
+            margin-right: 5px;
+          }
+        }
+      }
+
+      .tag-list {
+        display: flex;
+
+        .tag {
+          margin-left: 6px;
+          padding: 0 6px;
+          max-width: 65px;
+          background-color: #f2f3f5;
+          border-radius: 2px;
         }
       }
     }
+  }
 
-    .tag-list {
-      display: flex;
-
-      .tag {
-        margin-left: 6px;
-        padding: 0 6px;
-        max-width: 65px;
-        background-color: #f2f3f5;
-        border-radius: 2px;
-      }
-    }
+  .el-image {
+    flex-shrink: 0;
+    margin-left: 24px;
+    width: 108px;
+    height: 100%;
+    border-radius: 4px;
   }
 }
 </style>
