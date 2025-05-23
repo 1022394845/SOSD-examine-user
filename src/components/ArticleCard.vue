@@ -42,7 +42,7 @@ const onSearchTag = (tag) => {
         </div>
       </div>
     </div>
-    <el-image v-if="detail.image" :src="detail.img" lazy />
+    <el-image v-if="detail.image" :src="detail.image" lazy />
   </div>
 </template>
 
