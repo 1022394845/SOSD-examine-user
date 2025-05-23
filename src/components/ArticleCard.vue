@@ -1,5 +1,12 @@
 <script setup>
-const { detail, keyword } = defineProps({ detail: Object, keyword: String })
+import { Setting } from '@element-plus/icons-vue'
+import { deleteArticleAPI } from '@/api/user'
+
+const { detail, keyword, manage } = defineProps({
+  detail: Object,
+  keyword: String,
+  manage: Boolean
+})
 
 // 高亮匹配内容
 const highlightMatch = (text) => {
@@ -15,6 +22,19 @@ const onSearchTag = (tag) => {
     path: '/search',
     query: { tag }
   })
+}
+
+const emit = defineEmits(['success'])
+// 删除文章
+const onDelete = async (id) => {
+  await ElMessageBox.confirm('删除文章后无法恢复', '警告', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+  await deleteArticleAPI(id)
+  ElMessage.success('删除文章成功')
+  emit('success')
 }
 </script>
 
@@ -41,6 +61,18 @@ const onSearchTag = (tag) => {
           </div>
         </div>
       </div>
+      <!-- 文章管理 -->
+      <el-dropdown v-if="manage">
+        <template #default>
+          <el-icon class="op"><Setting /></el-icon>
+        </template>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>编辑</el-dropdown-item>
+            <el-dropdown-item @click="onDelete(detail.id)">删除</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
     <el-image v-if="detail.image" :src="detail.image" lazy />
   </div>
@@ -63,6 +95,7 @@ const onSearchTag = (tag) => {
   }
 
   .main-info {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -126,6 +159,23 @@ const onSearchTag = (tag) => {
           background-color: #f2f3f5;
           border-radius: 2px;
         }
+      }
+    }
+
+    .el-dropdown {
+      position: absolute;
+      right: 10px;
+      top: 0px;
+      font-size: 18px;
+      color: #8a919f;
+      cursor: pointer;
+
+      .op:focus-visible {
+        outline: unset;
+      }
+
+      .op[aria-expanded='true'] {
+        color: $mainColor;
       }
     }
   }
