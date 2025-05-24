@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4926329 */
-  src: url('iconfont.woff2?t=1747738793570') format('woff2'),
-       url('iconfont.woff?t=1747738793570') format('woff'),
-       url('iconfont.ttf?t=1747738793570') format('truetype');
+  src: url('iconfont.woff2?t=1748074892498') format('woff2'),
+       url('iconfont.woff?t=1748074892498') format('woff'),
+       url('iconfont.ttf?t=1748074892498') format('truetype');
 }
 
 .v-icon {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.v-icon-comment:before {
+  content: "\e891";
+}
+
+.v-icon-star:before {
+  content: "\e601";
 }
 
 .v-icon-like:before {
