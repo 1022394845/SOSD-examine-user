@@ -45,7 +45,7 @@ const router = createRouter({
           ]
         },
         {
-          path: '/article',
+          path: '/post',
           component: Article
         },
         {

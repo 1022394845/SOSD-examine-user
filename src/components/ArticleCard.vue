@@ -44,10 +44,18 @@ const onEdit = (id) => {
     query: { id }
   })
 }
+
+// 查看详情页
+const checkDetail = (id) => {
+  router.push({
+    path: '/post',
+    query: { id }
+  })
+}
 </script>
 
 <template>
-  <div class="article-card">
+  <div class="article-card" @click="checkDetail(detail.id)">
     <div class="main-info">
       <div class="title ellipsis" v-html="highlightMatch(detail.title)"></div>
       <div class="content ellipsis" v-html="highlightMatch(detail.content)"></div>
@@ -56,14 +64,14 @@ const onEdit = (id) => {
           <div class="hover">{{ detail.author }}</div>
           <el-divider direction="vertical" />
           <div class="item"><v-icon name="view" />{{ detail.viewNumber }}</div>
-          <div class="item hover"><v-icon name="like" />{{ detail.likeNumber }}</div>
+          <div class="item hover"><v-icon name="like" @click.stop />{{ detail.likeNumber }}</div>
         </div>
         <div class="tag-list">
           <div
             class="tag hover"
             v-for="(item, index) in detail.tags"
             :key="index"
-            @click="onSearchTag(item.name)"
+            @click.stop="onSearchTag(item.name)"
           >
             {{ item.name }}
           </div>
@@ -72,12 +80,12 @@ const onEdit = (id) => {
       <!-- 文章管理 -->
       <el-dropdown v-if="manage">
         <template #default>
-          <el-icon class="op"><Setting /></el-icon>
+          <el-icon class="op" @click.stop><Setting /></el-icon>
         </template>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item @click="onEdit(detail.id)">编辑</el-dropdown-item>
-            <el-dropdown-item @click="onDelete(detail.id)">删除</el-dropdown-item>
+            <el-dropdown-item @click.stop="onEdit(detail.id)">编辑</el-dropdown-item>
+            <el-dropdown-item @click.stop="onDelete(detail.id)">删除</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
