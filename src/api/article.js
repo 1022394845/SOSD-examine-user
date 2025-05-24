@@ -20,3 +20,7 @@ export const getCommentListAPI = (articleId) =>
 
 // 发表评论
 export const publishCommentAPI = (data) => request.post('/users/article/comments', data)
+
+// 获取AI文章总结
+export const getAIAbstractAPI = (articleId) =>
+  request.get('/users/article/ai', { params: { articleId } })

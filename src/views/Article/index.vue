@@ -1,10 +1,11 @@
 <script setup>
-import { getArticleDetailAPI, getCommentListAPI } from '@/api/article'
+import { getAIAbstractAPI, getArticleDetailAPI, getCommentListAPI } from '@/api/article'
 import hljs from 'highlight.js' // 代码块高亮
 import 'highlight.js/styles/atom-one-dark.css' // 代码块主题样式
 import { UserFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores'
 import CommentInput from './components/CommentInput.vue'
+import aiLogo from '@/assets/ai_abstract_logo.png'
 
 const detail = ref({})
 
@@ -68,6 +69,18 @@ const onReply = (index) => {
     commentList.value[index].onReply = true
   }
 }
+
+// AI总结
+const AIAbstract = ref('')
+const getAIAbstract = async () => {
+  const {
+    data: { summary }
+  } = await getAIAbstractAPI(route.query.id)
+  AIAbstract.value = summary
+}
+onMounted(() => {
+  getAIAbstract()
+})
 </script>
 
 <template>
@@ -82,6 +95,10 @@ const onReply = (index) => {
         </div>
       </div>
       <el-divider />
+      <div class="ai-abstract" v-if="AIAbstract">
+        <img :src="aiLogo" alt="" />
+        {{ AIAbstract }}
+      </div>
       <div class="content" v-html="detail.content"></div>
     </div>
     <div class="operation" v-if="detail.id">
@@ -154,6 +171,30 @@ const onReply = (index) => {
       .author {
         max-width: 160px;
         color: #515767;
+      }
+    }
+
+    .ai-abstract {
+      margin-bottom: 20px;
+      padding: 8px 16px;
+      background: url('@/assets/ai_abstract_bg.png') no-repeat center/cover;
+      border-radius: 8px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      word-break: break-all;
+      -webkit-line-clamp: 3;
+      color: #222226;
+      font-family: 'PingFang SC';
+      font-size: 16px;
+      line-height: 32px;
+      word-break: break-all;
+
+      img {
+        margin-right: 8px;
+        height: 25px;
+        vertical-align: text-bottom;
       }
     }
 
