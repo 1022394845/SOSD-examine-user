@@ -4,6 +4,7 @@ import hljs from 'highlight.js' // 代码块高亮
 import 'highlight.js/styles/atom-one-dark.css' // 代码块主题样式
 import { UserFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores'
+import CommentInput from './components/CommentInput.vue'
 
 const detail = ref({})
 
@@ -69,18 +70,7 @@ const comment = ref('')
           <img v-if="userStore.userInfo?.image" :src="userStore.userInfo.image" alt="" />
           <el-icon v-else><UserFilled /></el-icon>
         </el-avatar>
-        <div class="input-box">
-          <el-input
-            v-model="comment"
-            type="textarea"
-            placeholder="平等表达，友善交流"
-            resize="none"
-            :autosize="true"
-            @focus="onFocus"
-            @blur="onBlur"
-          />
-          <el-button type="primary" class="submit-btn">发表</el-button>
-        </div>
+        <CommentInput v-model="comment" />
       </div>
     </div>
   </div>
@@ -166,41 +156,6 @@ const comment = ref('')
 
       .avatar {
         font-size: 24px;
-      }
-
-      .input-box {
-        flex: 1;
-        margin-left: 20px;
-        padding: 10px;
-        border-radius: 4px;
-        background-color: #f2f3f5;
-        transition: all 0.3s;
-
-        &:hover {
-          background-color: #e4e6eb;
-        }
-
-        &:focus-within {
-          border: 1px solid $mainColor;
-          background-color: transparent;
-        }
-
-        :deep(.el-textarea__inner) {
-          outline: none;
-          border: none;
-          box-shadow: none;
-          background-color: transparent;
-          transition: all 0.3s;
-
-          &:focus {
-            min-height: 150px !important;
-          }
-        }
-
-        .submit-btn {
-          display: block;
-          margin-left: auto;
-        }
       }
     }
   }
