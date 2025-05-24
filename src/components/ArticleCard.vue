@@ -36,6 +36,14 @@ const onDelete = async (id) => {
   ElMessage.success('删除文章成功')
   emit('success')
 }
+
+// 编辑文章
+const onEdit = (id) => {
+  router.push({
+    path: '/user/publish',
+    query: { id }
+  })
+}
 </script>
 
 <template>
@@ -68,7 +76,7 @@ const onDelete = async (id) => {
         </template>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>编辑</el-dropdown-item>
+            <el-dropdown-item @click="onEdit(detail.id)">编辑</el-dropdown-item>
             <el-dropdown-item @click="onDelete(detail.id)">删除</el-dropdown-item>
           </el-dropdown-menu>
         </template>

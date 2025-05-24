@@ -26,7 +26,10 @@ const getHtml = () => {
 const getText = () => {
   return editorRef.value.getText()
 }
-defineExpose({ getHtml, getText })
+const setHtml = (content) => {
+  editorRef.value.setHtml(content)
+}
+defineExpose({ getHtml, getText, setHtml })
 </script>
 
 <template>

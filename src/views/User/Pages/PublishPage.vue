@@ -1,5 +1,10 @@
 <script setup>
-import { publishArticleAPI, uploadAvatarAPI } from '@/api/user'
+import {
+  getArticleDetailAPI,
+  modifyArticleAPI,
+  publishArticleAPI,
+  uploadAvatarAPI
+} from '@/api/user'
 import ArticleEditor from '@/components/ArticleEditor.vue'
 import { useArticleStore } from '@/stores'
 import { Plus } from '@element-plus/icons-vue'
@@ -25,6 +30,27 @@ const rules = {
 // 分类列表
 const { categoryList } = useArticleStore()
 
+// 编辑文章数据回显
+const route = useRoute()
+const loading = ref(false)
+const getDetail = async () => {
+  if (!route.query.id) return
+  loading.value = true
+  const {
+    data: { records }
+  } = await getArticleDetailAPI(route.query.id)
+  const { id, title, category, tags, image, content } = records[0]
+  const detail = { id, title, category, tags, image, content }
+  detail.tags = detail.tags.map((item) => item.name)
+  formModel.value = { ...detail }
+  setHtml(detail.content)
+  imageUrl.value = detail.image
+  loading.value = false
+}
+onMounted(() => {
+  getDetail()
+})
+
 // 更改头像
 const imageFile = ref()
 const imageUrl = ref()
@@ -42,6 +68,10 @@ const getHtml = () => {
 const getText = () => {
   return editorRef.value.getText()
 }
+// 设置富文本
+const setHtml = (content) => {
+  editorRef.value.setHtml(content)
+}
 
 const router = useRouter()
 const submit = async () => {
@@ -51,14 +81,18 @@ const submit = async () => {
     text: '发布中',
     background: 'rgba(0, 0, 0, 0.7)'
   })
-  formModel.value.content = getHtml()
-  if (imageFile.value) {
-    // 封面有更改
-    const { data: url } = await uploadAvatarAPI(imageFile.value)
-    formModel.value.image = url
+  try {
+    formModel.value.content = getHtml()
+    if (imageFile.value) {
+      // 封面有更改
+      const { data: url } = await uploadAvatarAPI(imageFile.value)
+      formModel.value.image = url
+    }
+    if (formModel.value.id) await modifyArticleAPI(formModel.value)
+    else await publishArticleAPI(formModel.value)
+  } finally {
+    loading.close()
   }
-  await publishArticleAPI(formModel.value)
-  loading.close()
   router.push('/user/article')
   ElMessage.success('发布成功')
 }
@@ -68,46 +102,48 @@ const submit = async () => {
   <div class="publish-page">
     <div class="title">发布文章</div>
     <el-divider />
-    <el-form
-      ref="form"
-      :model="formModel"
-      :rules="rules"
-      label-width="auto"
-      label-position="left"
-      hide-required-asterisk
-    >
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="formModel.title" placeholder="请输入标题" />
-      </el-form-item>
-      <el-form-item label="分类" prop="category">
-        <el-select v-model="formModel.category" placeholder="请选择分类">
-          <el-option
-            v-for="item in categoryList"
-            :key="item.name"
-            :label="item.label"
-            :value="item.name"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="标签">
-        <el-input-tag v-model="formModel.tag" placeholder="请输入文章标签" />
-      </el-form-item>
-      <el-form-item label="封面">
-        <el-upload
-          class="avatar-uploader"
-          :show-file-list="false"
-          :auto-upload="false"
-          :on-change="onChangeImage"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
-      </el-form-item>
-      <el-form-item prop="content">
-        <ArticleEditor ref="editorRef" />
-      </el-form-item>
-    </el-form>
-    <el-button type="primary" class="submit-btn" @click="submit">发布</el-button>
+    <div v-loading="loading">
+      <el-form
+        ref="form"
+        :model="formModel"
+        :rules="rules"
+        label-width="auto"
+        label-position="left"
+        hide-required-asterisk
+      >
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="formModel.title" placeholder="请输入标题" />
+        </el-form-item>
+        <el-form-item label="分类" prop="category">
+          <el-select v-model="formModel.category" placeholder="请选择分类">
+            <el-option
+              v-for="item in categoryList"
+              :key="item.name"
+              :label="item.label"
+              :value="item.name"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标签">
+          <el-input-tag v-model="formModel.tags" placeholder="请输入文章标签" />
+        </el-form-item>
+        <el-form-item label="封面">
+          <el-upload
+            class="avatar-uploader"
+            :show-file-list="false"
+            :auto-upload="false"
+            :on-change="onChangeImage"
+          >
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+        </el-form-item>
+        <el-form-item prop="content">
+          <ArticleEditor ref="editorRef" />
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" class="submit-btn" @click="submit">发布</el-button>
+    </div>
   </div>
 </template>
 

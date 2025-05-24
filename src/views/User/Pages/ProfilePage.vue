@@ -44,15 +44,18 @@ const submit = async () => {
     text: '修改中',
     background: 'rgba(0, 0, 0, 0.7)'
   })
-  if (imageFile.value) {
-    // 头像有更改
-    const { data: url } = await uploadAvatarAPI(imageFile.value)
-    formModel.value.image = url
+  try {
+    if (imageFile.value) {
+      // 头像有更改
+      const { data: url } = await uploadAvatarAPI(imageFile.value)
+      formModel.value.image = url
+    }
+    await modifyUserInfoAPI(formModel.value)
+    await userStore.getUserInfo() // 刷新个人信息
+    formModel.value = { ...userStore.userInfo }
+  } finally {
+    loading.close()
   }
-  await modifyUserInfoAPI(formModel.value)
-  await userStore.getUserInfo() // 刷新个人信息
-  formModel.value = { ...userStore.userInfo }
-  loading.close()
   ElMessage.success('修改成功')
 }
 </script>
