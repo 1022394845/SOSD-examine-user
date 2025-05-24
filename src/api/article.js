@@ -13,3 +13,7 @@ export const getSearchListAPI = (pageInfo, config) =>
 
 // 获取文章详情
 export const getArticleDetailAPI = (id) => request.get('/users/article', { params: { id } })
+
+// 获取评论列表
+export const getCommentListAPI = (articleId) =>
+  request.get('/users/article/comments', { params: { articleId } })

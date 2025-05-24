@@ -1,11 +1,18 @@
 <script setup>
 const comment = defineModel()
+
+const { autoFocus } = defineProps({ autoFocus: Boolean })
+const textRef = ref()
+onMounted(() => {
+  if (autoFocus) textRef.value.focus()
+})
 </script>
 
 <template>
   <div class="input-box">
     <el-input
       v-model="comment"
+      ref="textRef"
       type="textarea"
       placeholder="平等表达，友善交流"
       resize="none"

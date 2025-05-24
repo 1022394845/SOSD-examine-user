@@ -1,5 +1,5 @@
 <script setup>
-import { getArticleDetailAPI } from '@/api/article'
+import { getArticleDetailAPI, getCommentListAPI } from '@/api/article'
 import hljs from 'highlight.js' // 代码块高亮
 import 'highlight.js/styles/atom-one-dark.css' // 代码块主题样式
 import { UserFilled } from '@element-plus/icons-vue'
@@ -9,14 +9,14 @@ import CommentInput from './components/CommentInput.vue'
 const detail = ref({})
 
 const route = useRoute()
-const loading = ref(true)
+const detailLoading = ref(true)
 const getArticleDetail = async () => {
-  loading.value = true
+  detailLoading.value = true
   const { data } = await getArticleDetailAPI(route.query.id)
   detail.value = data
   await nextTick()
   hljs.highlightAll() // 代码块高亮注册
-  loading.value = false
+  detailLoading.value = false
 }
 onMounted(() => {
   getArticleDetail()
@@ -36,10 +36,42 @@ const scrollToComment = () => {
 
 const userStore = useUserStore()
 const comment = ref('')
+
+const commentList = ref([])
+const commentLoading = ref(true)
+const getCommentList = async () => {
+  commentLoading.value = true
+  const {
+    data: { comments }
+  } = await getCommentListAPI(route.query.id)
+  comments.forEach((item) => {
+    item.reply = ''
+    item.onReply = false
+  })
+  commentList.value = comments
+  commentLoading.value = false
+}
+onMounted(() => {
+  getCommentList()
+})
+
+// 回复
+let lastActiveIndex = null
+const onReply = (index) => {
+  const status = commentList.value[index].onReply
+  if (status) commentList.value[index].onReply = false
+  else {
+    if (lastActiveIndex !== null) {
+      commentList.value[lastActiveIndex].onReply = false
+    }
+    lastActiveIndex = index
+    commentList.value[index].onReply = true
+  }
+}
 </script>
 
 <template>
-  <div class="article-page" v-loading="loading">
+  <div class="article-page" v-loading="detailLoading">
     <div class="detail">
       <h1 class="title">{{ detail.title }}</h1>
       <div class="base-info">
@@ -68,9 +100,26 @@ const comment = ref('')
       <div class="publish">
         <el-avatar class="avatar" fit="fill">
           <img v-if="userStore.userInfo?.image" :src="userStore.userInfo.image" alt="" />
-          <el-icon v-else><UserFilled /></el-icon>
+          <el-icon class="user-icon" v-else><UserFilled /></el-icon>
         </el-avatar>
         <CommentInput v-model="comment" />
+      </div>
+      <div class="comment-list">
+        <div class="item" v-for="(item, index) in commentList" :key="index">
+          <el-avatar class="avatar" fit="fill">
+            <img v-if="item.image" :src="item.image" alt="" />
+            <el-icon class="user-icon" v-else><UserFilled /></el-icon>
+          </el-avatar>
+          <div class="info">
+            <div class="user ellipsis">{{ item.username }}</div>
+            <div class="content">{{ item.content }}</div>
+            <div class="comment-btn" @click="onReply(index)" :class="{ active: item.onReply }">
+              <v-icon name="comment" style="margin-right: 5px" />
+              <span>{{ item.onReply ? '取消评论' : '评论' }}</span>
+            </div>
+            <CommentInput v-if="item.onReply" v-model="item.reply" :autoFocus="true" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -111,7 +160,7 @@ const comment = ref('')
   .operation {
     position: fixed;
     top: 200px;
-    left: 200px;
+    left: 10%;
     display: flex;
     flex-direction: column;
     height: fit-content;
@@ -153,9 +202,44 @@ const comment = ref('')
     .publish {
       margin-top: 20px;
       display: flex;
+    }
 
-      .avatar {
-        font-size: 24px;
+    .user-icon {
+      font-size: 24px;
+    }
+
+    .comment-list {
+      .item {
+        margin: 20px 0;
+        display: flex;
+
+        .info {
+          margin-left: 20px;
+          flex: 1;
+          overflow: hidden;
+          font-size: 16px;
+
+          .user {
+            margin-bottom: 5px;
+            color: #515767;
+          }
+
+          .comment-btn {
+            margin: 5px 0;
+            color: #8a919f;
+            cursor: pointer;
+            font-size: 14px;
+
+            &:hover,
+            &.active {
+              color: $mainColor;
+            }
+          }
+        }
+
+        .input-box {
+          margin-left: 0;
+        }
       }
     }
   }
