@@ -1,5 +1,7 @@
 <script setup>
 import { getArticleDetailAPI } from '@/api/article'
+import hljs from 'highlight.js' // 代码块高亮
+import 'highlight.js/styles/atom-one-dark.css' // 代码块主题样式
 
 const detail = ref({})
 
@@ -9,6 +11,8 @@ const getArticleDetail = async () => {
   loading.value = true
   const { data } = await getArticleDetailAPI(route.query.id)
   detail.value = data
+  await nextTick()
+  hljs.highlightAll() // 代码块高亮注册
   loading.value = false
 }
 onMounted(() => {
