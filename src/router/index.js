@@ -4,6 +4,11 @@ import Home from '@/views/Home/index.vue'
 import User from '@/views/User/index.vue'
 import Search from '@/views/Search/index.vue'
 import Article from '@/views/Article/index.vue'
+import ProfilePage from '@/views/User/Pages/ProfilePage.vue'
+import ArticlePage from '@/views/User/Pages/ArticlePage.vue'
+import StarPgae from '@/views/User/Pages/StarPgae.vue'
+import HistoryPage from '@/views/User/Pages/HistoryPage.vue'
+import PublishPage from '@/views/User/Pages/PublishPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,23 +29,23 @@ const router = createRouter({
           children: [
             {
               path: 'profile',
-              component: () => import('@/views/User/Pages/ProfilePage.vue')
+              component: ProfilePage
             },
             {
               path: 'article',
-              component: () => import('@/views/User/Pages/ArticlePage.vue')
+              component: ArticlePage
             },
             {
               path: 'star',
-              component: () => import('@/views/User/Pages/StarPgae.vue')
+              component: StarPgae
             },
             {
               path: 'history',
-              component: () => import('@/views/User/Pages/HistoryPage.vue')
+              component: HistoryPage
             },
             {
               path: 'publish',
-              component: () => import('@/views/User/Pages/PublishPage.vue')
+              component: PublishPage
             }
           ]
         },
