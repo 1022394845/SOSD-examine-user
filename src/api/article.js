@@ -17,3 +17,6 @@ export const getArticleDetailAPI = (id) => request.get('/users/article', { param
 // 获取评论列表
 export const getCommentListAPI = (articleId) =>
   request.get('/users/article/comments', { params: { articleId } })
+
+// 发表评论
+export const publishCommentAPI = (data) => request.post('/users/article/comments', data)

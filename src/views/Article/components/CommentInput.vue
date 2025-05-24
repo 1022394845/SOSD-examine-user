@@ -1,4 +1,6 @@
 <script setup>
+import { publishCommentAPI } from '@/api/article'
+
 const comment = defineModel()
 
 const { autoFocus } = defineProps({ autoFocus: Boolean })
@@ -6,6 +8,20 @@ const textRef = ref()
 onMounted(() => {
   if (autoFocus) textRef.value.focus()
 })
+
+const route = useRoute()
+const emit = defineEmits(['success'])
+const loading = ref(false)
+const submit = async () => {
+  loading.value = true
+  const formModel = {}
+  if (route.query.id) formModel.articleId = route.query.id
+  await publishCommentAPI(formModel)
+  comment.value = ''
+  loading.value = false
+  ElMessage.success('发表成功')
+  emit('success')
+}
 </script>
 
 <template>
@@ -18,7 +34,9 @@ onMounted(() => {
       resize="none"
       :autosize="true"
     />
-    <el-button type="primary" class="submit-btn">发送</el-button>
+    <el-button type="primary" class="submit-btn" :disabled="!comment || loading" @click="submit">
+      发送
+    </el-button>
   </div>
 </template>
 

@@ -102,7 +102,7 @@ const onReply = (index) => {
           <img v-if="userStore.userInfo?.image" :src="userStore.userInfo.image" alt="" />
           <el-icon class="user-icon" v-else><UserFilled /></el-icon>
         </el-avatar>
-        <CommentInput v-model="comment" />
+        <CommentInput v-model="comment" @success="getCommentList" />
       </div>
       <div class="comment-list">
         <div class="item" v-for="(item, index) in commentList" :key="index">
@@ -117,7 +117,12 @@ const onReply = (index) => {
               <v-icon name="comment" style="margin-right: 5px" />
               <span>{{ item.onReply ? '取消评论' : '评论' }}</span>
             </div>
-            <CommentInput v-if="item.onReply" v-model="item.reply" :autoFocus="true" />
+            <CommentInput
+              v-if="item.onReply"
+              v-model="item.reply"
+              :autoFocus="true"
+              @success="getCommentList"
+            />
           </div>
         </div>
       </div>
