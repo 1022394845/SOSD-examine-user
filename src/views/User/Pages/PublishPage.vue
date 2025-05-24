@@ -1,6 +1,8 @@
 <script setup>
+import { publishArticleAPI, uploadAvatarAPI } from '@/api/user'
 import ArticleEditor from '@/components/ArticleEditor.vue'
 import { useArticleStore } from '@/stores'
+import { Plus } from '@element-plus/icons-vue'
 
 // 表单
 const form = ref()
@@ -8,14 +10,64 @@ const formModel = ref({})
 // 校验规则
 const rules = {
   title: [{ required: true, message: '标题不可为空', trigger: 'blur' }],
-  category: [{ required: true, message: '分类不可为空', trigger: 'blur' }]
+  category: [{ required: true, message: '分类不可为空', trigger: 'blur' }],
+  content: [
+    {
+      validator: (rule, value, callback) => {
+        if (getText()) callback()
+        else callback(new Error('内容不可为空'))
+      },
+      trigger: 'blur'
+    }
+  ]
 }
 
+// 分类列表
 const { categoryList } = useArticleStore()
+
+// 更改头像
+const imageFile = ref()
+const imageUrl = ref()
+const onChangeImage = (file) => {
+  imageFile.value = file
+  imageUrl.value = URL.createObjectURL(file.raw)
+}
+
+const editorRef = ref()
+// 获取富文本
+const getHtml = () => {
+  return editorRef.value.getHtml()
+}
+// 获取纯文本
+const getText = () => {
+  return editorRef.value.getText()
+}
+
+const router = useRouter()
+const submit = async () => {
+  await form.value.validate()
+  const loading = ElLoading.service({
+    lock: true,
+    text: '发布中',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+  formModel.value.content = getHtml()
+  if (imageFile.value) {
+    // 封面有更改
+    const { data: url } = await uploadAvatarAPI(imageFile.value)
+    formModel.value.image = url
+  }
+  await publishArticleAPI(formModel.value)
+  loading.close()
+  router.push('/user/article')
+  ElMessage.success('发布成功')
+}
 </script>
 
 <template>
   <div class="publish-page">
+    <div class="title">发布文章</div>
+    <el-divider />
     <el-form
       ref="form"
       :model="formModel"
@@ -40,13 +92,76 @@ const { categoryList } = useArticleStore()
       <el-form-item label="标签">
         <el-input-tag v-model="formModel.tag" placeholder="请输入文章标签" />
       </el-form-item>
+      <el-form-item label="封面">
+        <el-upload
+          class="avatar-uploader"
+          :show-file-list="false"
+          :auto-upload="false"
+          :on-change="onChangeImage"
+        >
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+        </el-upload>
+      </el-form-item>
+      <el-form-item prop="content">
+        <ArticleEditor ref="editorRef" />
+      </el-form-item>
     </el-form>
-    <ArticleEditor />
+    <el-button type="primary" class="submit-btn" @click="submit">发布</el-button>
   </div>
 </template>
 
 <style scoped lang="scss">
 .publish-page {
-  padding: 20px;
+  padding: 0 20px 20px;
+
+  .title {
+    padding: 16px 20px;
+    line-height: 24px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .el-divider {
+    margin: 0 0 20px;
+  }
+
+  :deep(.avatar-uploader) {
+    .avatar {
+      display: block;
+      width: 165px;
+      height: 120px;
+      border-radius: 4px;
+    }
+
+    .el-upload {
+      border: 1px dashed var(--el-border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: var(--el-transition-duration-fast);
+
+      &:hover {
+        border-color: var(--el-color-primary);
+      }
+    }
+
+    .el-icon {
+      width: 165px;
+      height: 120px;
+      font-size: 28px;
+      color: #8c939d;
+      text-align: center;
+    }
+  }
+
+  .submit-btn {
+    display: block;
+    margin: 10px auto 0;
+    width: 200px;
+    height: 40px;
+    font-size: 20px;
+  }
 }
 </style>

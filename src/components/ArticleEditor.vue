@@ -17,6 +17,16 @@ onBeforeUnmount(() => {
   if (editor == null) return
   editor.destroy()
 })
+
+// 获取富文本
+const getHtml = () => {
+  return editorRef.value.getHtml()
+}
+// 获取纯文字
+const getText = () => {
+  return editorRef.value.getText()
+}
+defineExpose({ getHtml, getText })
 </script>
 
 <template>

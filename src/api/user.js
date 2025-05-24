@@ -44,3 +44,6 @@ export const getUserArticleAPI = (id) => request.get('/user/person/articles', { 
 
 // 删除文章
 export const deleteArticleAPI = (id) => request.delete('/user/article', { id })
+
+// 发布文章
+export const publishArticleAPI = (data) => request.post('/user/article', { ...data })

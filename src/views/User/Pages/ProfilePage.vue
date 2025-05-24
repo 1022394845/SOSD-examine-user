@@ -23,14 +23,16 @@ onMounted(async () => {
   loading.value = true
   if (!userStore.userInfo.id) await userStore.getUserInfo()
   formModel.value = { ...userStore.userInfo }
+  imageUrl.value = formModel.value.image
   loading.value = false
 })
 
 // 更改头像
 const imageFile = ref()
+const imageUrl = ref()
 const onChangeImage = (file) => {
   imageFile.value = file
-  formModel.value.image = URL.createObjectURL(file.raw)
+  imageUrl.value = URL.createObjectURL(file.raw)
 }
 
 // 保存
@@ -39,12 +41,12 @@ const submit = async () => {
   await form.value.validate()
   const loading = ElLoading.service({
     lock: true,
-    text: '上传中',
+    text: '修改中',
     background: 'rgba(0, 0, 0, 0.7)'
   })
   if (imageFile.value) {
     // 头像有更改
-    const url = await uploadAvatarAPI(imageFile.value)
+    const { data: url } = await uploadAvatarAPI(imageFile.value)
     formModel.value.image = url
   }
   await modifyUserInfoAPI(formModel.value)
@@ -89,7 +91,7 @@ const submit = async () => {
           :auto-upload="false"
           :on-change="onChangeImage"
         >
-          <img v-if="formModel.image" :src="formModel.image" class="avatar" />
+          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
         </el-upload>
       </el-form-item>
