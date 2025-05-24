@@ -48,8 +48,5 @@ export const deleteArticleAPI = (id) => request.delete('/user/article', { id })
 // 发布文章
 export const publishArticleAPI = (data) => request.post('/user/article', { ...data })
 
-// 获取文章详情
-export const getArticleDetailAPI = (id) => request.get(`/user/article/${id}`)
-
 // 编辑文章
 export const modifyArticleAPI = (data) => request.post('/user/article/edit', { ...data })

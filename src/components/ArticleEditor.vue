@@ -4,7 +4,7 @@ import '@wangeditor/editor/dist/css/style.css' // 引入 css
 
 const editorRef = shallowRef()
 const toolbarConfig = {
-  excludeKeys: ['emotion', 'group-image', 'group-video', 'fullScreen']
+  excludeKeys: ['todo', 'emotion', 'group-image', 'group-video', 'fullScreen']
 }
 const editorConfig = { placeholder: '请输入内容...' }
 

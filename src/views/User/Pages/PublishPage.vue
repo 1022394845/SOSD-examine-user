@@ -1,10 +1,6 @@
 <script setup>
-import {
-  getArticleDetailAPI,
-  modifyArticleAPI,
-  publishArticleAPI,
-  uploadAvatarAPI
-} from '@/api/user'
+import { getArticleDetailAPI } from '@/api/article'
+import { modifyArticleAPI, publishArticleAPI, uploadAvatarAPI } from '@/api/user'
 import ArticleEditor from '@/components/ArticleEditor.vue'
 import { useArticleStore } from '@/stores'
 import { Plus } from '@element-plus/icons-vue'
@@ -36,10 +32,8 @@ const loading = ref(false)
 const getDetail = async () => {
   if (!route.query.id) return
   loading.value = true
-  const {
-    data: { records }
-  } = await getArticleDetailAPI(route.query.id)
-  const { id, title, category, tags, image, content } = records[0]
+  const { data } = await getArticleDetailAPI(route.query.id)
+  const { id, title, category, tags, image, content } = data
   const detail = { id, title, category, tags, image, content }
   detail.tags = detail.tags.map((item) => item.name)
   formModel.value = { ...detail }
@@ -83,6 +77,7 @@ const submit = async () => {
   })
   try {
     formModel.value.content = getHtml()
+    console.log(formModel.value)
     if (imageFile.value) {
       // 封面有更改
       const { data: url } = await uploadAvatarAPI(imageFile.value)
